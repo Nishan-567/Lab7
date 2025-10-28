@@ -79,30 +79,30 @@ def run_server(host="", port=8080):
     s.listen(1)
     print("Visit http://172.20.10.8:8080 in your browser.")
 
-        while True:
-            conn, addr = s.accept()
-            with conn:
-                data = conn.recv(1024).decode("utf-8", errors="ignore")
-                if not data:
-                    continue
+    while True:
+        conn, addr = s.accept()
+        with conn:
+            data = conn.recv(1024).decode("utf-8", errors="ignore")
+            if not data:
+                continue
 
-                if data.startswith("POST"):
-                    params = parse_post_data(data)
-                    led = params.get("led", "1")
-                    brightness = params.get("brightness", "0")
+            if data.startswith("POST"):
+                params = parse_post_data(data)
+                led = params.get("led", "1")
+                brightness = params.get("brightness", "0")
 
-                    try:
-                        brightness = int(brightness)
-                        brightness = max(0, min(100, brightness))
-                        led_values[led] = brightness
-                        pwm_leds[led].ChangeDutyCycle(brightness)
-                        print(f"LED {led} set to {brightness}% brightness")
-                    except Exception as e:
-                        print("Error processing POST data:", e)
+                try:
+                    brightness = int(brightness)
+                    brightness = max(0, min(100, brightness))
+                    led_values[led] = brightness
+                    pwm_leds[led].ChangeDutyCycle(brightness)
+                    print(f"LED {led} set to {brightness}% brightness")
+                except Exception as e:
+                    print("Error processing POST data:", e)
 
-                # Always send updated HTML page
-                response = html_page()
-                conn.sendall(response.encode("utf-8"))
+            # Always send updated HTML page
+            response = html_page()
+            conn.sendall(response.encode("utf-8"))
 
 # ---------------- Main ----------------
 if __name__ == "__main__":
