@@ -102,42 +102,41 @@ def parse_post_data(request):
         return {}
 
 # ---------------- TCP/IP Server ----------------
-def run_server(host="0.0.0.0", port=8080):
-    print(f"Starting LED control server on {host}:{port}")
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((host, port))
-        s.listen(1)
-        print("Server ready. Visit http://<Pi_IP>:8080 in your browser.")
+def run_server(host="", port=8080):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((host, port))
+    s.listen(1)
+    print("Visit http://172.20.10.8:8080 in your browser.")
 
-        while True:
-            conn, addr = s.accept()
-            with conn:
-                data = conn.recv(2048).decode("utf-8", errors="ignore")
-                if not data:
-                    continue
+    while True:
+        conn, addr = s.accept()
+        with conn:
+            data = conn.recv(2048).decode("utf-8", errors="ignore")
+            if not data:
+                continue
 
-                # Handle POST request (from JS fetch)
-                if data.startswith("POST"):
-                    params = parse_post_data(data)
-                    led = params.get("led")
-                    brightness = params.get("brightness")
+            # Handle POST request (from JS fetch)
+            if data.startswith("POST"):
+                params = parse_post_data(data)
+                led = params.get("led")
+                brightness = params.get("brightness")
 
-                    if led in led_values and brightness is not None:
-                        try:
-                            brightness = int(brightness)
-                            brightness = max(0, min(100, brightness))
-                            led_values[led] = brightness
-                            pwm_leds[led].ChangeDutyCycle(brightness)
-                            print(f"LED {led} → {brightness}%")
-                        except Exception as e:
-                            print("POST parse error:", e)
+                if led in led_values and brightness is not None:
+                    try:
+                        brightness = int(brightness)
+                        brightness = max(0, min(100, brightness))
+                        led_values[led] = brightness
+                        pwm_leds[led].ChangeDutyCycle(brightness)
+                        print(f"LED {led} → {brightness}%")
+                    except Exception as e:
+                        print("POST parse error:", e)
 
-                    # Respond minimally to JS (no page reload)
-                    conn.sendall(b"HTTP/1.1 204 No Content\r\n\r\n")
+                # Respond minimally to JS (no page reload)
+                conn.sendall(b"HTTP/1.1 204 No Content\r\n\r\n")
 
-                else:  # Handle initial GET request
-                    response = html_page()
-                    conn.sendall(response.encode("utf-8"))
+            else:  # Handle initial GET request
+                response = html_page()
+                conn.sendall(response.encode("utf-8"))
 
 # ---------------- Main ----------------
 if __name__ == "__main__":
