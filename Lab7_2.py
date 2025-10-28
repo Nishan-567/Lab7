@@ -121,15 +121,14 @@ def run_server(host="", port=8080):
                 led = params.get("led")
                 brightness = params.get("brightness")
 
-                if led in led_values and brightness is not None:
-                    try:
-                        brightness = int(brightness)
-                        brightness = max(0, min(100, brightness))
-                        led_values[led] = brightness
-                        pwm_leds[led].ChangeDutyCycle(brightness)
-                        print(f"LED {led} → {brightness}%")
-                    except Exception as e:
-                        print("POST parse error:", e)
+                try:
+                    brightness = int(brightness)
+                    brightness = max(0, min(100, brightness))
+                    led_values[led] = brightness
+                    pwm_leds[led].ChangeDutyCycle(brightness)
+                    print(f"LED {led} → {brightness}%")
+                except Exception as e:
+                    print("POST parse error:", e)
 
                 # Respond minimally to JS (no page reload)
                 conn.sendall(b"HTTP/1.1 204 No Content\r\n\r\n")
