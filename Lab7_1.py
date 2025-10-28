@@ -73,12 +73,11 @@ def parse_post_data(request):
         return {}
 
 # ---------------- TCP/IP Server ----------------
-def run_server(host="0.0.0.0", port=8080):
-    print(f"Starting server on {host}:{port}")
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((host, port))
-        s.listen(1)
-        print("Server ready. Visit http://<Pi_IP>:8080 in your browser.")
+def run_server(host="", port=8080):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((host, port))
+    s.listen(1)
+    print("Visit http://172.20.10.8:8080 in your browser.")
 
         while True:
             conn, addr = s.accept()
