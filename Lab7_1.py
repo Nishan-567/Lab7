@@ -76,7 +76,7 @@ def parsePOSTdata(request):
         for pair in data_pairs:
             key_val = pair.split('=')
             if len(key_val) == 2:
-            data_dict[key_val[0]] = key_val[1]
+                data_dict[key_val[0]] = key_val[1]
         return data_dict
         
     except Exception:
