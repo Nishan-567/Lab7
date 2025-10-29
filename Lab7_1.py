@@ -67,7 +67,7 @@ Content-Type: text/html
 </html>"""
 
 #read and parse data from POST request -> Lecture 7, slide 20
-def parsePOSTdata(request):
+def parsePOSTdata(data):
     try:
         data_dict = {}
         idx = data.find('\r\n\r\n')+4
