@@ -121,7 +121,7 @@ if __name__ == "__main__":
     try:
         run_server()
     except KeyboardInterrupt:
-        print("\nExiting...")
+        print("\nExiting")
     finally:
         for pwm in pwm_leds.values():
             pwm.stop()
